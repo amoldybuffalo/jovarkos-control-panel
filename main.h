@@ -10,4 +10,4 @@ typedef struct Category
 	char* id;
 } Category; //makes up the basis of each settings page
 
-hash_element modules[30]; //hold each settings module. 30 or fewer is just a safe assumption for now. Increase if neccesary
+hash_element categories[30]; //hold each settings module. 30 or fewer is just a safe assumption for now. Increase if necessary

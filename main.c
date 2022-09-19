@@ -2,16 +2,10 @@
 #include <gtk/gtk.h>
 #include "hash_map.h"
 #include "utils.h"
+#include "modules.h"
 #include "main.h"
 
 //temporary for testing delete when unnecesary
-GtkWidget* main_box;
-GtkWidget* sample_box2;
-GtkWidget* sample_btn2;
-GtkWidget* sample_box;
-GtkWidget* sample_btn;
-Category c2;
-Category c;
 //............................................
 
 
@@ -19,8 +13,8 @@ void on_category_button_click(GtkWidget* widget, gpointer data)
 {
 	char* id = (char*) data;
 
-	GtkWidget* interface = modules->find(modules, id); //grab the gtk_box identified by id
-	modules->modify(modules, id, g_object_ref(interface)); //necessary if we want to keep our object reference
+	GtkWidget* interface = categories->find(categories, id); //grab the gtk_box identified by id
+	categories->modify(categories, id, g_object_ref(interface)); //necessary if we want to keep our object reference
 
 	//TODO: turn this into a function
 	GList* children = gtk_container_get_children(GTK_CONTAINER(viewing_window));
@@ -46,10 +40,11 @@ void on_resize(GtkWidget* widget, gpointer data)
 	
 }
 
-Category generate_category(char* name, char* id)
+Category generate_category(Module m)
 {
-	char* markup = mk_label_text(name, "Sans 15");
-	Category category = {markup, id};	
+	char* markup = mk_label_text(m.name, "Sans 15");
+	categories->add(categories, m.id, m.box);
+	Category category = {markup, m.id};	
 	return category;
 }
 
@@ -89,26 +84,11 @@ static void activate (GtkApplication *app, gpointer user_data)
 {		
 
 	  make_basic_structure();
-	  hash_init(modules, 30);
-
-
-	  
-	  
-	  //make a sample settings page	
-	  sample_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	  sample_btn = gtk_button_new_with_label("test");
-	  gtk_box_pack_start(GTK_BOX(sample_box), sample_btn, 1,1,1);
-	  modules->add(modules, "sample", sample_box);
-	  c = generate_category("Sample category", "sample");
+	  hash_init(categories, 30);
+	  Module m = load_module("test", "Test Module");
+	  Category c = generate_category(m);
 	  load_category(c);
-
-	  sample_box2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	  sample_btn2 = gtk_button_new_with_label("test2");
-	  gtk_box_pack_start(GTK_BOX(sample_box2), sample_btn2, 1,1,1);
-	  modules->add(modules, "another", sample_box2);
-	  c2 = generate_category("Sample category 2", "another");
-	  load_category(c2);
-
+	   
 	  //g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(on_resize), NULL);
 
 }
